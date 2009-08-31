@@ -1,0 +1,11 @@
+{
+	"id": "com.deliciousmorsel.wooton",
+	"version": "0.0.2",
+	"vendor": "Delicious Morsel LLC",
+	"type": "web",
+	"main": "index.html",
+	"title": "WootOn!",
+	"icon": "icon.png",
+	"reportSuite": "dwilkinsllc.deliciousmorsel",
+	"noWindow": "true"
+}

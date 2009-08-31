@@ -1,0 +1,3 @@
+StageAssistant = Class.create({
+
+});

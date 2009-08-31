@@ -1,0 +1,190 @@
+/* Put Application specific CSS here. */
+body.palm-default
+{
+	background-color: #FFF;
+}
+body.palm-default .palm-header
+{
+	/*-webkit-border-image: url('../images/header.png') 0 25 43 25 repeat repeat;
+	height:42px;
+	line-height: 40px;*/
+	font-size:18px;
+	font-weight:bold;
+	padding:0px;
+	z-index: 20000;
+}
+
+.loading
+{
+	background-image: url('../images/loading/woot.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+#updateButton
+{
+	height:30px;
+	background: transparent url('../images/update.png') center center no-repeat;
+}
+#updateButton.loading
+{
+	background: transparent url('../images/loader.gif') top center no-repeat;
+	height:26px;
+}
+
+
+
+.productDescription
+{
+	
+	margin-top:-8px;
+	position:relative;
+	font-family: "Trebuchet MS",Trebuchet,Calibri,Tahoma,Arial,sans-serif;
+	font-size:13px;
+	padding:0 5px;
+	height:145px;
+}
+.productDescription.loading
+{
+	background-image: url('../images/loading/woot.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+div.wine-scene .productDescription.loading
+{
+	background-image: url('../images/loading/wine.gif');
+}
+div.shirt-scene .productDescription.loading
+{
+	background-image: url('../images/loading/shirt.gif');
+}
+div.sellout-scene .productDescription.loading
+{
+	background-image: url('../images/loading/sellout.gif');
+}
+div.kids-scene .productDescription.loading
+{
+	background-image: url('../images/loading/kids.gif');
+}
+
+.productDescription .title
+{
+	font-size: 1.4em;
+	line-height:18px;
+	text-align: right;
+	font-weight:bold;
+	height:36px;
+	max-height: 36px;
+	overflow: none;
+}
+.productDescription .price
+{
+	position:absolute;
+	right:5px;
+	top:42px;
+	font-size:1.5em;
+	font-weight:bold;
+}
+.productDescription .shipping
+{
+	position:absolute;
+	right:5px;
+	top:68px;
+	color:#666;
+}
+.productDescription .condition
+{
+	position:absolute;
+	right:5px;
+	top:88px;
+	color:#666;
+	font-size:11px;
+}
+.productDescription #thumbHolder
+{
+	position:absolute;
+	left:15px;
+	top:38px;
+}
+.productDescription img.thumbnail
+{
+	border:none;
+	display:block;
+}
+.productDescription .thumbnail.loading
+{
+	background-color: #FFF;
+	background-image: url('../images/loading.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.productDescription #wootOff
+{
+	position:absolute;
+	left:5px;
+	bottom:10px;
+	height:30px;
+	width:30px;
+	background-image: url('../images/wootoff.png');
+	background-position: bottom left;
+	background-repeat: no-repeat;
+}
+.productDescription #soldPercentage
+{
+	position:absolute;
+	left:15px;
+	bottom:3px;
+	height:3px;
+	width:128px;
+	border:1px solid #000;
+	background-color: #91AB62;
+}
+
+.productDescription #buySoldout
+{
+	position:absolute;
+	right:5px;
+	top:106px;
+}
+
+.bigDescription
+{
+	font-size:14px;
+	padding:5px 5px 56px 5px;
+	border-top:1px solid #888;
+	min-height:180px;
+}
+div.woot-scene .bigDescription
+{
+	background-color: #91AB62;
+}
+
+div.shirt-scene .bigDescription
+{
+	background-color: #5A8BB0;
+}
+
+div.wine-scene .bigDescription
+{
+	background-color: #AD5D62;
+}
+
+div.kids-scene .bigDescription
+{
+	background-color: #E19433;
+}
+
+div.sellout-scene .bigDescription
+{
+	background-color: #8A85AA;
+}
+.bigDescription p
+{
+	padding: 0 3px;
+	font-size: 14px;
+}
+.bigDescription .subtitle
+{
+	font-weight:bold;
+	font-size:1.3em;
+}

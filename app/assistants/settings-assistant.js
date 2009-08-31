@@ -1,0 +1,4 @@
+SettingsAssistant = Class.create(BaseTab , 
+{
+
+});
