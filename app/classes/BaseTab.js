@@ -18,16 +18,23 @@ BaseTab = Class.create({
 	{
 		this.initNav();
 		this.doSetup();
+		
+		var landscape = WootOn.Preferences.getLandscapeSettings();
+		if (landscape.gestures)
+		{
+			this.controller.useLandscapePageUpDown(true);
+		}
 	},
 	
 	cleanup: function()
 	{
+		this.cleanupNav();
 		this.doCleanup();
 	},
 	
 	activate: function(e)
 	{
-		this.nav.activate();
+		WootOn.activeNav.activate();
 		this.doActivate();
 		
 		var main = this.controller.getSceneScroller().down("div#main");
@@ -39,7 +46,7 @@ BaseTab = Class.create({
 	
 	deactivate: function(e)
 	{
-		this.nav.deactivate();
+		WootOn.activeNav.deactivate();
 		this.doDeactivate();
 		
 		var main = this.controller.getSceneScroller().down("div#main");
@@ -51,21 +58,34 @@ BaseTab = Class.create({
 	
 	initNav: function()
 	{
-		this.nav = new WootOn.Nav(this.controller.sceneName);
-		this.nav.addCallBack(this.navClick.bind(this));
-		this.controller.getSceneScroller().appendChild(this.nav.DOM);
-		this.nav.setSizing();
+		if (!WootOn.activeNav)
+		{
+			WootOn.activeNav = new WootOn.Nav(this.controller.sceneName);
+		}
+		else
+		{
+			WootOn.activeNav.initHighlight(this.controller.sceneName);
+		}
+		WootOn.activeNav.addCallBack(this.navClick.bind(this));
+		this.controller.getSceneScroller().appendChild(WootOn.activeNav.DOM);
+		
+		WootOn.activeNav.setSizing();
 		if (this.navOffset)
 		{
-			this.nav.setOffset(this.navOffset);
+			WootOn.activeNav.setOffset(this.navOffset);
 		}
+	},
+	
+	cleanupNav: function()
+	{
+		WootOn.activeNav.DOM.remove();
 	},
 	
 	navClick: function(e)
 	{
 		var el = e.srcElement || e.target;
 		if (el.assistant == this.controller.sceneName) return false;
-		this.nav.addHighlight(el.assistant);
+		WootOn.activeNav.addHighlight(el.assistant);
 		if (this.doNavSwitch)
 		{
 			window.clearTimeout(this.doNavSwitch);
@@ -75,7 +95,7 @@ BaseTab = Class.create({
 	
 	navSwitch: function(scene , o)
 	{
-		var options = {user:this.user , navOffset: this.nav.getOffset()};
+		var options = {user:this.user , navOffset: WootOn.activeNav.getOffset()};
 		var o = o || {};
 		var options = Object.extend(options , o);
 		this.controller.stageController.swapScene({name: scene , transition: Mojo.Transition.crossFade} , options);
@@ -105,27 +125,51 @@ BaseTab = Class.create({
 	
 	scrollToTop: function()
 	{
-		var scroller = this.controller.getSceneScroller();
-		var distance;
-		//scroller.scrollTop = (0);
-		var func = (function(el , distance) { 
-			var cur = el.scrollTop;
-			cur -= distance;
-			if (cur < 5)
-			{
-				el.scrollTop = 0;
-				return;
-			}
-			else
-			{
-				el.scrollTop = cur;
-				window.setTimeout(arguments.callee.bind({}, el , distance) , 50);
-			}
-		});
+		this.controller.getSceneScroller().mojo.scrollTo(0 , 0 , true , false);
+	},
+	
+	handleCommand: function(event)
+	{
+		this.doHandleCommand(event);
+	},
+	
+	doHandleCommand: function(event)
+	{
+		if (event.type == Mojo.Event.commandEnable && (event.command == Mojo.Menu.helpCmd || event.command == Mojo.Menu.prefsCmd)) 
+		{
+         	event.stopPropagation(); // enable help. now we have to handle it
+		}
 		
-		distance = Math.ceil(scroller.scrollTop/10);
-		if (distance < 30) distance = 30;
-		func(scroller , distance);
+		if (event.type == Mojo.Event.command) 
+		{
+			switch (event.command) 
+			{
+				case Mojo.Menu.helpCmd:
+					this.controller.stageController.pushScene('support');
+				break;
+				
+				case Mojo.Menu.prefsCmd:
+					this.controller.stageController.pushScene('settings');
+				break;			
+				
+			}
+		}
+	},
+	
+	orientationChanged: function(orientation)
+	{
+		var landscape = WootOn.Preferences.getLandscapeSettings();
+		if (this._orientation === orientation || !landscape.enabled)
+		{
+			return;
+		}
+		
+		this._orientation = orientation;
+		this.controller.window.PalmSystem.setWindowOrientation(this._orientation);
+		if (WootOn.activeNav && WootOn.activeNav.resetSizing)
+		{
+			WootOn.activeNav.resetSizing();
+		}
 	},
 	
 	doInitialize: function(){},

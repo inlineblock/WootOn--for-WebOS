@@ -1,5 +1,99 @@
-<div id="main" class="palm-hasheader">
-	<div class="palm-header center" id="main-hdr">
-	Settings
+<div class="palm-page-header">
+	<div class="palm-page-header-wrapper">
+	    <div id="appIcon" class="img_icon"></div>                        
+		<div class="title">Preferences</div>      
+	</div>
+</div>
+
+<div class="palm-group">
+	<div class="palm-group-title">
+		<span x-mojo-loc=''>Landscape Settings</span>
+	</div>
+	<div class="palm-list">
+		<div class="palm-row first" id="landscapeFirst">
+			<div class="palm-row-wrapper">
+				<div x-mojo-element="ToggleButton" id="landscapeModeToggle" name="togglebuttonName"></div>
+				<div class="title" x-mojo-loc="">
+                	Landscape Mode
+            	</div>
+			</div>
+		</div>
+		<div class="palm-row last" id="landscapeLast">
+			<div class="palm-row-wrapper">
+				<div x-mojo-element="ToggleButton" id="scrollGesturesToggle" name="checkboxName"></div>
+				<div class="title" x-mojo-loc="">
+                	Scroll Gestures
+            	</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="palm-group">
+	<div class="palm-group-title">
+		<span x-mojo-loc=''>Notification Settings</span>
+	</div>
+	<div class="palm-list">
+		<div class="palm-row first" id="notificationsFirst">
+			<div class="palm-row-wrapper">
+				<div x-mojo-element="ToggleButton" id="enableNotificationsToggle" name="togglebuttonName"></div>
+				<div class="title" x-mojo-loc="">
+                	Enable Notifications
+            	</div>
+			</div>
+		</div>
+		<div id="notificationGroup">
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="ToggleButton" id="vibrateNotificationsToggle" name="togglebuttonName"></div>
+					<div class="title" x-mojo-loc="">
+	                	Vibrate on New
+	            	</div>
+				</div>
+			</div>
+			
+			
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="ToggleButton" id="wootNotificationsToggle" name="togglebuttonName"></div>
+					<div class="title" x-mojo-loc="">
+	                	Woot!
+	            	</div>
+				</div>
+			</div>
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="ToggleButton" id="shirtNotificationsToggle" name="togglebuttonName"></div>
+					<div class="title" x-mojo-loc="">
+	                	Shirt!
+	            	</div>
+				</div>
+			</div>
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="ToggleButton" id="selloutNotificationsToggle" name="togglebuttonName"></div>
+					<div class="title" x-mojo-loc="">
+	                	Sellout!
+	            	</div>
+				</div>
+			</div>
+			<div class="palm-row">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="ToggleButton" id="kidsNotificationsToggle" name="togglebuttonName"></div>
+					<div class="title" x-mojo-loc="">
+	                	Kids!
+	            	</div>
+				</div>
+			</div>
+			<div class="palm-row last" id="notificationsLast">
+				<div class="palm-row-wrapper">
+					<div x-mojo-element="ToggleButton" id="wineNotificationsToggle" name="togglebuttonName"></div>
+					<div class="title" x-mojo-loc="">
+	                	Wine!
+	            	</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

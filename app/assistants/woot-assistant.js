@@ -3,7 +3,7 @@ WootAssistant = Class.create(BaseTab , {
 	
 	doInitialize: function()
 	{
-		this.nduid  = new Mojo.Model.Cookie('nduid');
+		this.nduid = new Mojo.Model.Cookie('nduid');
 		this.createListeners();
 	},
 	
@@ -29,27 +29,33 @@ WootAssistant = Class.create(BaseTab , {
 	{
 		this.container = this.controller.get(this.getContainerName());
 		this.initUpdateIcon();
-		this.loadWoot();
+		this.loadCachedWoot();
 	},
 	
-	loadWoot: function()
+	loadCachedWoot: function()
 	{
-		var cache = WootOn.Cache.get(this.wootType());
-		if (cache)
+		WootOn.Cache.get(this.wootType() , this.loadCachedWootCallBack.bind(this));
+		this.showLoading();
+		this.model = false;
+		this.modelChanged();
+	},
+	
+	loadCachedWootCallBack: function(model)
+	{
+		if (model && model.updateURL && model.update)
 		{
-			this.model = cache;
+			this.model = model;
+			this.model.updateURL(WootOn.getFeedURL(this.wootType()));
+			this.model.update(this.updateCallBack.bind(this));
 			this.modelChanged();
-			this.model.update(this.updateCB.bind(this));
-			this.updateButtonLoading();
 		}
 		else
 		{
-			this.modelChanged();
-			this.model = new WootOn.Model();
-			this.model.loadViaURL(this.getFeedURL() , this.getFeedCB.bind(this));
-			this.updateButtonLoading();
+			this.model = new WootOn.Model(WootOn.getFeedURL(this.wootType()));
+			this.model.load(this.getFeedCB.bind(this));
 		}
 	},
+	
 	
 	initUpdateIcon: function()
 	{
@@ -67,13 +73,14 @@ WootAssistant = Class.create(BaseTab , {
 		
 		if (this.model)
 		{
-			this.updateButtonLoading();
-			this.model.update(this.updateCB.bind(this));
+			this.showLoading();
+			this.model.update(this.updateCallBack.bind(this));
 		}
 	},
 	
 	doActivate: function()
 	{
+		window.setTimeout(WootOn.Notifications.enable , 500);
 		if (this.updateIcon)
     	{
     		this.updateIcon.observe(Mojo.Event.tap , this._refreshWoot);
@@ -86,23 +93,14 @@ WootAssistant = Class.create(BaseTab , {
     	{
     		this.updateIcon.stopObserving(Mojo.Event.tap , this._refreshWoot);
     	}
-		this.removePurchase();
-		this.removeImages();
+		
 	},
 	
 	doCleanup: function()
 	{
 		window.clearTimeout(this.autoRefresh);
-	},
-	
-	getFeedURL: function()
-	{
-		var url = "http://www.deliciousmorsel.com/cache/%action%?uuid=%unique%&version=%version%&device=pre"
-		var url = url.replace("%action%" , this.wootType());
-		var url = url.replace("%version%" , Mojo.Controller.appInfo.version);
-		var url = url.replace("%unique%" , this.nduid.get() || "none");
-		console.log(url);
-		return url;
+		this.removePurchase();
+		this.removeImages();
 	},
 	
 	getFeedCB: function(o)
@@ -118,9 +116,9 @@ WootAssistant = Class.create(BaseTab , {
 		}
 	},
 	
-	updateCB: function(o)
+	updateCallBack: function(o)
 	{
-		console.log(o);
+		Mojo.Log.info('------updateCallBack');
 		if (o)
 		{
 			this.modelChanged();
@@ -136,7 +134,7 @@ WootAssistant = Class.create(BaseTab , {
 	{
 		try
 		{
-			this.updateButtonNormal();
+			this.hideLoading();
 			this.removePurchase();
 			this.removeImages();
 			var error = error || false;
@@ -147,11 +145,11 @@ WootAssistant = Class.create(BaseTab , {
 					this.container.innerHTML = Mojo.View.render({object: {} , template: "woot/error"});
 				}
 			}
-			else if (!this.model)
+			else if (!this.model || !this.model.isLoaded)
 			{
 				this.container.innerHTML = Mojo.View.render({object: {} , template: "woot/loading"});
 			}
-			else if (this.wootType() == "woot" && this.model.isWootOff())
+			else if (this.model.isWootOff())
 			{
 				
 				this.container.innerHTML = Mojo.View.render({object: this.model , template: "woot/wootOffTemplate"});
@@ -237,7 +235,7 @@ WootAssistant = Class.create(BaseTab , {
 		}
 	},
 	
-	updateButtonLoading: function()
+	showLoading: function()
 	{
 		if (!this.controller) return;
 		var ub = this.controller.get('updateIcon');
@@ -247,7 +245,7 @@ WootAssistant = Class.create(BaseTab , {
 		}
 	},
 	
-	updateButtonNormal: function()
+	hideLoading: function()
 	{
 		var ub = this.controller.get('updateIcon');
 		if (ub)
@@ -282,7 +280,6 @@ WootAssistant = Class.create(BaseTab , {
 		
 		WootOn.Cache.set(this.wootType() , this.model);
 	}
-	
 	
 	
 });

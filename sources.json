@@ -1,40 +1,57 @@
 [
-    {"source": "app\/assistants\/stage-assistant.js"},
-    {"source": "app\/assistants\/app-assistant.js"},
-    {"source": "lib\/omniture.js"},
-    {"source": "app\/classes\/Delicious.js"},
-    {"source": "app\/classes\/Delicious.StageManager.js"},
-    {"source": "app\/classes\/WootOn.js"},
-    {"source": "app\/classes\/WootOn.Nav.js"},
-    {"source": "app\/classes\/WootOn.Cache.js"},
-    {"source": "app\/classes\/WootOn.Model.js"},
-    {"source": "app\/classes\/BaseTab.js"},
+    {"source": "app/assistants/stage-assistant.js"},
+    {"source": "app/assistants/app-assistant.js"},
+    {"source": "support_info.js"},
+    {"source": "lib/omniture.js"},
+    {"source": "app/classes/Delicious.js"},
+    {"source": "app/classes/Delicious.StageManager.js"},
+    {"source": "app/classes/Delicious.Date.js"},
+    {"source": "app/classes/WootOn.js"},
+    {"source": "app/classes/WootOn.Nav.js"},
+    {"source": "app/classes/WootOn.Cacher.js"},
+    {"source": "app/classes/WootOn.Model.js"},
+    {"source": "app/classes/WootOn.Notifications.js"},
+    {"source": "app/classes/WootOn.Preferences.js"},
+    {"source": "app/classes/BaseTab.js"},
+    {"source": "app/assistants/woot-assistant.js"} ,
     {
         "scenes": "woot",
-        "source": "app\/assistants\/woot-assistant.js"
+        "source": "app/assistants/woot-assistant.js"
     },
     {
         "scenes": "shirt",
-        "source": "app\/assistants\/shirt-assistant.js"
+        "source": "app/assistants/shirt-assistant.js"
     },
     {
         "scenes": "wine",
-        "source": "app\/assistants\/wine-assistant.js"
+        "source": "app/assistants/wine-assistant.js"
     },
     {
         "scenes": "sellout",
-        "source": "app\/assistants\/sellout-assistant.js"
+        "source": "app/assistants/sellout-assistant.js"
     },
     {
         "scenes": "kids",
-        "source": "app\/assistants\/kids-assistant.js"
+        "source": "app/assistants/kids-assistant.js"
     },
     {
         "scenes": "settings",
-        "source": "app\/assistants\/settings-assistant.js"
+        "source": "app/assistants/settings-assistant.js"
     },
     {
         "scenes": "display-pic",
-        "source": "app\/assistants\/display-pic-assistant.js"
+        "source": "app/assistants/display-pic-assistant.js"
+    },
+    {
+        "scenes": "support",
+        "source": "app/assistants/support-assistant.js"
+    },
+    {
+        "scenes": "Notifications",
+        "source": "app/assistants/Notifications-assistant.js"
+    },
+    {
+        "scenes": "CheckNotifications",
+        "source": "app/assistants/CheckNotifications-assistant.js"
     }
 ]

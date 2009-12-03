@@ -1,52 +1,56 @@
-div.bottomNav
+div#bottomNavWrapper
 {
 	border-top:1px solid #454545;
-	padding-top:2px;
-	position:fixed;
+	white-space: nowrap;
+	position: fixed;
+	bottom: 0px;
 	left:0px;
 	right:0px;
-	bottom:0px;
+	z-index: 100;
 	height:48px;
-	overflow-x:visible;
-	overflow-y: hidden;
-	white-space:nowrap;
-	z-index:100;
-	background:#666 url('../images/tabbar.png') top left repeat-x;
-	min-width:320px;
+	background: url('../images/tabbar.png') top left repeat-x;
+	-webkit-transition-duration: 350ms;
+	-webkit-transition-timing-function:ease-out;
 }
-div.bottomNav.woot
+div#bottomNavWrapper.woot
 {
 	background-color:#61861E;
 }
-div.bottomNav.shirt
+div#bottomNavWrapper.shirt
 {
 	background-color:#216294;
 }
-div.bottomNav.wine
+div#bottomNavWrapper.wine
 {
 	background-color: #8A1B26;
 }
-div.bottomNav.kids
+div#bottomNavWrapper.kids
 {
 	background-color: #FFE086;
 }
-div.bottomNav.sellout
+div#bottomNavWrapper.sellout
 {
 	background-color:#4B437D;
 }
-div.bottomNav.settings
+
+div.bottomNav
 {
-	background-color:#7F7F7F;
+	position: absolute;
+	white-space: nowrap;
+	bottom:0px;
+	margin: 0 auto;
+	text-align:center;
 }
+
 div.bottomNav div.navItem
 {
 	text-transform:uppercase;
 	font-size:9px;
-	color:#000;
+	color:#E8E8E8;
 	font-weight:bold;
 	font-family:coconut,arial;
 	height:48px;
-	width:65px;
+	width:62px;
 	margin:0 3px;
 	padding:0px;
 	float:left;
@@ -55,12 +59,13 @@ div.bottomNav div.navItem
 	white-space:nowrap;
 	position:relative;
 	z-index:150;
+	display: inline-block;
 }
 div.bottomNav div#highlighter
 {
 	position:absolute;
 	bottom:1px;
-	width:66px;
+	width:62px;
 	height:48px;
 	-webkit-transition-duration: 350ms;
 	-webkit-transition-timing-function:ease-out;
@@ -89,39 +94,15 @@ div.bottomNav div.rightArrow
 }
 div.bottomNav div.navItem.first
 {
-	margin-left:23px;
+	margin-left:18px;
 }
 div.bottomNav div.navItem.last
 {
-	
+	margin-right:18px;
 }
-/*** THE HIGHLIGHTER STUFF ***/
-div.bottomNav div#highlighter.woot
-{
-	left:22px;
-}
-div.bottomNav div#highlighter.shirt
-{
-	left:93px;
-}
-div.bottomNav div#highlighter.sellout
-{
-	left:165px;
-}
-div.bottomNav div#highlighter.kids
-{
-	left:234px;
-}
-div.bottomNav div#highlighter.wine
-{
-	left:303px;
-}
-
-/*** END OF NAV SlIDER ***/
-
 div.bottomNav div.navItem
 {
-	-webkit-transition-duration: 500ms;
+	-webkit-transition-duration: 400ms;
 	-webkit-transition-timing-function:ease-out;
 }
 div.bottomNav div.navItem.woot
@@ -168,19 +149,4 @@ div.bottomNav div.navItem.kids.highlight
 {
 	background: url('../images/nav/kids-highlight.png') center center no-repeat;
 	color:#FFF;
-}
-
-#updateIcon
-{
-	background: url('../images/update_icon.png') center center no-repeat;
-	width:40px;
-	height:40px;
-	top:4px;
-	left:8px;
-	z-index:1000;
-	position:fixed;
-}
-#updateIcon.loading
-{
-	background: transparent url('../images/update_loading.gif') center center no-repeat;
 }

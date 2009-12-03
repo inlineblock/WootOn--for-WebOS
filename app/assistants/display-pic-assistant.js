@@ -8,36 +8,58 @@ DisplayPicAssistant = Class.create({
 	orientation: false,
 	activated: false,
 	
+	loaded: false,
+	
 	initialize: function(o)
 	{
-		
-		var o = o || {};
+		o = o || {};
 		this.imageURL = o.imageURL || false;
 		this.title = o.title || false;
+		
 		this._provideURL = this.provideURL.bindAsEventListener(this);
 	},
 	
 	setup: function()
 	{
-		if (!this.imageURL)
+		try
 		{
-			this.controller.stageController.popScene();
+			if (!this.imageURL) return this.controller.stageController.popScene();
+			
+			this._orientation = this.controller.stageController.getAppController().getScreenOrientation();
+			
+			if (!this.imageURL)
+			{
+				this.controller.stageController.popScene();
+			}
+			
+			this.flipviewElement = this.controller.get('image_flipview_full');
+			this.fullscreener = this.controller.get('fullscreener');
+			this.controller.setupWidget('image_flipview_full' , {} , {});
+			
+			this.controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true} , { visible: true, items: [{ label: $L('Save Photo'), command: 'savePhoto' }]});
+		
 		}
+		catch(e)
+		{
+			Mojo.Log.error('------ , ' , Object.toJSON(e));
+		}
+	},
+	
+	cleanup: function()
+	{
 		
-		this.flipviewElement = this.controller.get('image_flipview_full');
-		var wW = this.controller.getSceneScroller().offsetWidth;
-		var wH = this.controller.getSceneScroller().offsetHeight;
-		this.flipviewElement.setStyle({height: wH + "px" , width: wW + "px"});
-		this.controller.setupWidget('image_flipview_full' , {} , {});
-		
-		this.appMenuModel = { visible: true, items: [{ label: $L('Save Photo'), command: 'savePhoto' }]};
-		this.controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, this.appMenuModel);
-		
+	},
+	
+	resetSizing: function()
+	{
+		var w = this.fullscreener.offsetWidth;
+		var h = this.fullscreener.offsetHeight;
+		Mojo.Log.info('sizing infomration: ' , w , h);
+		this.flipviewElement.mojo.manualSize(w , h);
 	},
 	
 	handleCommand: function(event)
 	{
-		
 		if(event.type == Mojo.Event.command) 
 		{
 			switch(event.command)
@@ -45,20 +67,14 @@ DisplayPicAssistant = Class.create({
 				case 'savePhoto':
 					var onSuccess = this.onSuccessPhotoSave.bind(this);
 					var onFailure = this.onFailurePhotoSave.bind(this);
-					/*var save = new Mojo.Service.Request('palm://com.deliciousmorsel.twee' , {
-									method: 'saveAttachment',
-									onSuccess: onSuccess,
-									onFailure: onFailure,
-									parameters : { uri : imgUrl }	  
-				    });*/
-				    
-				   var imgurl = this.imageURL.replace(' ' , '%20');
-				   this._downloadRequest = new Mojo.Service.Request('palm://com.palm.downloadmanager', {
-				   		method: 'download',
+					var imgurl = this.imageURL;
+					var mimeExt = this.imageURL.substring(this.imageURL.length - 3 , this.imageURL.length);
+					this._downloadRequest = new Mojo.Service.Request('palm://com.palm.downloadmanager', {
+							method: 'download',
 						parameters: {
-							id: 'com.deliciousmorsel.twee',
-							'target': imgurl, 
-							'targetDir': '/media/internal/wallpapers'
+							'target': imgurl,
+							'targetDir': '/media/internal/downloads',
+							'mime': 'image/' + mimeExt
 							},
 						'onSuccess': onSuccess,
 						'onFailure': onFailure
@@ -69,14 +85,15 @@ DisplayPicAssistant = Class.create({
 		}
 	},
 	
-	onSuccessPhotoSave: function()
+	onSuccessPhotoSave: function(e)
 	{
-		 var banner = this.controller.showBanner({messageText: "Photo saved successfully." , icon: "twee"} , {} , "twee");
+		Mojo.Log.info("PhotoSAVE----" , Object.toJSON(e));
+		var banner = this.controller.showBanner({messageText: "Photo saved successfully." , icon: "Feeds"} , {} , "Feeds");
 	},
 	
 	onFailurePhotoSave: function()
 	{
-		var banner = this.controller.showBanner({messageText: "Unable to save photo. " , icon: "twee"} , {} , "twee");
+		var banner = this.controller.showBanner({messageText: "Unable to save photo. " , icon: "Feeds"} , {} , "Feeds");
 	},
 	
 	activate: function(event)
@@ -93,8 +110,19 @@ DisplayPicAssistant = Class.create({
 	
 	provideURL: function()
 	{
-			this.flipviewElement.removeClassName('loading');
-			this.flipviewElement.mojo.centerUrlProvided(this.imageURL);
+		this.loaded = true;
+		this.flipviewElement.removeClassName('loading');
+		this.flipviewElement.mojo.centerUrlProvided(this.imageURL);
+		this.resetSizing();
+	},
+	
+	orientationChanged: function(orientation)
+	{
+		if (this._orientation === orientation) return;
+		
+		this._orientation = orientation;
+		this.controller.window.PalmSystem.setWindowOrientation(this._orientation);
+		this.resetSizing();
 	}
 
 });

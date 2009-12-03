@@ -7,6 +7,7 @@ AppAssistant = Class.create({
 	
 	setup: function()
 	{
+		WootOn.Cache = new WootOn.Cacher();
 		WootOn.StageManager = new Delicious.StageManager(this.controller);
 		this.fireTracking();
 	},
@@ -14,9 +15,10 @@ AppAssistant = Class.create({
 	handleLaunch: function(o)
 	{
 		var o = o || {};
-		if (o.update)
+		if (o.checkForUpdates)
 		{
-		
+			Mojo.Log.info('--------WootON::checkForUpdates');
+			WootOn.StageManager.newDashboard('CheckNotifications');
 		}
 		else
 		{

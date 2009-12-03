@@ -13,7 +13,9 @@ body.palm-default .palm-header
 	padding:0px;
 	z-index: 20000;
 }
-
+.palm-dashboard-icon.WootOn {
+	background: url(../icon.png) center left no-repeat; 
+}
 .loading
 {
 	background-image: url('../images/loading/woot.gif');
@@ -30,9 +32,26 @@ body.palm-default .palm-header
 	background: transparent url('../images/loader.gif') top center no-repeat;
 	height:26px;
 }
+.fullscreen
+{
+	display: block;
+	position: fixed;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+}
 
-
-
+.fullScreen
+{
+	position:absolute;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	width:100%;
+	display: block;
+}
 .productDescription
 {
 	
@@ -187,4 +206,101 @@ div.sellout-scene .bigDescription
 {
 	font-weight:bold;
 	font-size:1.3em;
+}
+
+
+#updateIcon
+{
+	background: url('../images/update_icon.png') center center no-repeat;
+	width:40px;
+	height:40px;
+	top:4px;
+	left:8px;
+	z-index:1000;
+	position:fixed;
+}
+#updateIcon.loading
+{
+	background: transparent url('../images/update_loading.gif') center center no-repeat;
+}
+
+#nextButton
+{
+	position: absolute;
+	width:30px;
+	height:40px;
+	top: 50%;
+	margin-top:-20px;
+	right: 3px;
+	background: transparent url('../images/next_arrow.png') center center no-repeat;
+}
+
+#notificationContainer .productDescription
+{
+	width:210px;
+}
+#notificationContainer .productDescription .title
+{
+	position: absolute;
+	top:12px;
+	left:0px;
+	font-size:18px;
+	color:#DDD;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width:210px;
+	text-align: left;
+}
+#notificationContainer .productDescription .price
+{
+	position: absolute;
+	top:32px;
+	left:0px;
+	font-size:16px;
+	color:#DDD;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width:120px;
+	text-align: left;
+}
+#notificationContainer .productDescription .type
+{
+	position: absolute;
+	font-weight:bold;
+	top:30px;
+	right:12px;
+	font-size:18px;
+	color:#DDD;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width:65px;
+	text-align: right;
+	text-transform: capitalize;
+}
+#main-text
+{
+	text-transform: capitalize;
+}
+#notificationContainer .productDescription .type.woot
+{
+	color:#91AB62;
+}
+#notificationContainer .productDescription .type.shirt
+{
+	color:#5A8BB0;
+}
+#notificationContainer .productDescription .type.wine
+{
+	color:#AD5D62;
+}
+#notificationContainer .productDescription .type.kids
+{
+	color:#FFE086;
+}
+#notificationContainer .productDescription .type.sellout
+{
+	color:#8A85AA;
 }

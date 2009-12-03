@@ -2,6 +2,7 @@ WootOn.Nav = Class.create({
 
 	controller:false,
 	DOM: false,
+	Dragger: false,
 	activeTab: false,
 	flick: false,
 	flicker: false,
@@ -11,36 +12,36 @@ WootOn.Nav = Class.create({
 				{className:'shirt' , title:"Shirt!"} , 
 				{className:"sellout" , title:"Sellout!"} ,
 				{className:"kids" , title:"Kids!"} ,
-				{className:"wine" , title:"Wine!"} ,
-				
-				
+				{className:"wine" , title:"Wine!"}
 			],
 	
 	navItems: [],
 	
 	initialize: function(activeTab)
 	{
-		this.activeTab = activeTab || "timeline";
+		this.activeTab = activeTab || "woot";
 		this.initDOM();
 		this._internalCallBack = this.internalCallBack.bindAsEventListener(this);
 		this._onDragStart = this.onDragStart.bindAsEventListener(this);
 		this._onDragEnd = this.onDragEnd.bindAsEventListener(this);
 		this._onDragging = this.onDragging.bindAsEventListener(this);
 		this._flickHandler = this.flickHandler.bindAsEventListener(this);
-		this._flickUpdater = this.flickUpdater.bind(this);
 		this._mouseDown = this.mouseDown.bindAsEventListener(this);
+		
+		this.initHighlight(this.activeTab);
 	},
 	
 	initDOM: function()
 	{
-		this.DOM = new Element('div' , {className:'bottomNav'});
-		this.DOM.setAttribute('x-mojo-element' , "Scroller");
+		this.DOM = new Element('div' , {id: 'bottomNavWrapper' , className:'bottomNavWrapper'});
+		this.Dragger = new Element('div' , {className:'bottomNav'});
+		this.DOM.appendChild(this.Dragger);
 		this.highlighter = new Element('div' , {id: 'highlighter'});
-		this.DOM.appendChild(this.highlighter);
+		this.Dragger.appendChild(this.highlighter);
 		this.leftArrow = new Element('div' , {className:'leftArrow'});
 		this.rightArrow = new Element('div' , {className:'rightArrow'});
-		this.DOM.appendChild(this.leftArrow);
-		this.DOM.appendChild(this.rightArrow);
+		this.Dragger.appendChild(this.leftArrow);
+		this.Dragger.appendChild(this.rightArrow);
 		this.navItems = [];
 		for(var i=0; i < this.navData.length; i++)
 		{
@@ -58,49 +59,38 @@ WootOn.Nav = Class.create({
 			}
 			item.innerHTML = nav.title;
 			this.navItems.push(item);
-			this.DOM.appendChild(this.navItems[i]);
+			this.Dragger.appendChild(this.navItems[i]);
 		}
-		this.addHighlight(this.activeTab);
 	},
 	
 	setSizing: function()
 	{
-		var size = 0;
-		var children = this.DOM.childElements();
-		for (var i=0; i < children.length; i++)
-		{
-			if (children[i].hasClassName('navItem'))
-			{
-				var width = children[i].getWidth();
-				size += width +8;
-			}
-		}
-		size += 20;
-		this.DOM.setStyle({width: size + "px"});
-		if (this.DOM.parentNode)
-		{
-			var width = this.DOM.parentNode.offsetWidth;	
-		}
-		else
-		{
-			var width = window.innerWidth || 320;
-		}
-		this.maxOffset = (size-(width)) * -1;
+		this.maxOffset = (this.Dragger.scrollWidth - this.DOM.offsetWidth) * -1;
 		this.setArrows();
+	},
+	
+	initHighlight: function(navItem)
+	{
+		if (!this.activeTab || this.activeTab != navItem)
+		{
+			this.addHighlight(navItem);
+		}
 	},
 	
 	addHighlight: function(navItem)
 	{
-		if (!navItem) return;
+		if (!navItem || !this.DOM.parentNode) return;
 		var item;
 		var i = 0;
-		this.DOM.className = navItem + " bottomNav";
-		this.highlighter.className = navItem;
-		while (item = this.DOM.down('.navItem' , i))
+		this.DOM.className = navItem;
+		while (item = this.Dragger.down('.navItem' , i))
 		{
 			if (item.hasClassName(navItem))
 			{
 				item.addClassName('highlight');
+				var offset = item.offsetLeft;
+				this.highlighter.setStyle({left: offset + 'px'});
+				this.activeTab = navItem;
 			}
 			else
 			{
@@ -149,15 +139,15 @@ WootOn.Nav = Class.create({
 	
 	onDragStart: function(e)
 	{
-		this.DOM.observe(Mojo.Event.dragEnd , this._onDragEnd);
-		this.DOM.observe(Mojo.Event.dragging , this._onDragging);
+		this.Dragger.observe(Mojo.Event.dragEnd , this._onDragEnd);
+		this.Dragger.observe(Mojo.Event.dragging , this._onDragging);
 		
 		this.firstPointer = e.move.clientX;
 		this.originalOffset = this.getOffsetNum();
-		this.flick = false;
-		if (this.flicker)
-		{	
-			window.clearTimeout(this.flicker);
+		if (this.flickAnimator)
+		{
+			this.flickAnimator.cancel();
+			delete this.flickAnimator;
 		}
 	},
 	
@@ -166,12 +156,13 @@ WootOn.Nav = Class.create({
 		this.firstPointer = false;
 		this.originalOffset = false;
 		this.dragStartTime = false;
-		this.DOM.stopObserving(Mojo.Event.dragEnd , this._onDragEnd);
-		this.DOM.stopObserving(Mojo.Event.dragging , this._onDragging);
+		this.Dragger.stopObserving(Mojo.Event.dragEnd , this._onDragEnd);
+		this.Dragger.stopObserving(Mojo.Event.dragging , this._onDragging);
 	},
 	
 	onDragging: function(e)
 	{
+		if (this.maxOffset >= 0) return;
 		var p = (this.firstPointer - e.move.clientX)*-1;
 		p = p + this.originalOffset;
 		if (p > 0)
@@ -182,63 +173,57 @@ WootOn.Nav = Class.create({
 		{
 			p = this.maxOffset;
 		}
-		this.DOM.setStyle({left: p + "px"});
+		this.Dragger.setStyle({left: p + "px"});
 		this.setArrows();
 	},
 	
 	flickHandler: function(e)
 	{
-		this.flick = false;
-		if (this.flicker)
+		if (this.maxOffset >= 0) return;
+		if (this.flickAnimator)
 		{
-			window.clearTimeout(this.flicker);
+			this.flickAnimator.cancel();
+			delete this.flickAnimator;
 		}
-		this.flick = true;
-		var times = Math.round(1250/50);
-		var move = (e.velocity.x / times);
-		this.flicker = window.setTimeout(this.flickUpdater.bind(this , move , times) , 25);
-		var date = new Date();
-		this.dragStartTime = date.getTime();
-		this.flickOffset = this.getOffsetNum();
+		
+		this.flickAnimator = Mojo.Animation.animateValue(this.getAnimationQueue(), 'linear', this.animateCallBack.bind(this), {onComplete: this.animatorComplete.bind(this) , from: this.getOffsetNum(), to: (this.getOffsetNum() + (e.velocity.x * 0.3)), duration: 0.5 , curve: Mojo.Animation.easeOut });
 	},
 	
-	flickUpdater: function(velocity , move)
+	animatorComplete: function()
 	{
-		if (!this.flick) return;
-		
-		this.flickOffset = this.flickOffset + velocity;
-		if (this.flickOffset > 0)
-		{
-			this.flickOffset = 0;
-			this.DOM.setStyle({left: this.flickOffset + "px"});
-			this.flickFinish();
-			return;
-		}
-		else if (this.flickOffset < this.maxOffset)
-		{
-			this.flickOffset = this.maxOffset;
-			this.DOM.setStyle({left: this.flickOffset + "px"});
-			this.flickFinish();
-			return;
-		}
-		
-		if (move == 0 || (velocity < 1 && velocity > -1))
-		{
-			this.flickFinish();
-			return;
-		}
-		this.DOM.setStyle({left: this.flickOffset + "px"});
-		move--;
-		velocity = Math.floor(velocity * 0.925);
-		this.flicker = window.setTimeout(this.flickUpdater.bind(this , velocity , move) , 25);
+		delete this.flickAnimator;
 		this.setArrows();
 	},
 	
-	flickFinish: function()
+	animateCallBack: function(val)
 	{
-		this.flick = false;
-		this.flicker = false;
-		this.setArrows();
+		val = val || 0;
+		if (val >= 0)
+		{
+			this.Dragger.setStyle({left: 0 + "px"});
+			this.frameDistanceAnimator.cancel();
+			delete this.flickAnimator;
+			this.setArrows();
+			return;
+		}
+		else if (val < this.maxOffset)
+		{
+			this.Dragger.setStyle({left: this.maxOffset + "px"});
+			this.frameDistanceAnimator.cancel();
+			delete this.flickAnimator;
+			this.setArrows();
+			return;
+		}
+		else
+		{
+			this.Dragger.setStyle({left: val + "px"});
+			this.setArrows();
+		}
+	},
+	
+	getAnimationQueue: function() 
+	{
+		return Mojo.Animation.queueForElement(this.Dragger);
 	},
 	
 	activate: function()
@@ -250,9 +235,9 @@ WootOn.Nav = Class.create({
 			this.navItems[i].observe(Mojo.Event.tap , this._internalCallBack);
 		}
 		
-		this.DOM.observe(Mojo.Event.dragStart , this._onDragStart);
-		this.DOM.observe(Mojo.Event.flick , this._flickHandler);
-		this.DOM.observe("mousedown" , this._mouseDown);
+		this.Dragger.observe(Mojo.Event.dragStart , this._onDragStart);
+		this.Dragger.observe(Mojo.Event.flick , this._flickHandler);
+		this.Dragger.observe("mousedown" , this._mouseDown);
 	},
 	
 	deactivate: function()
@@ -262,12 +247,12 @@ WootOn.Nav = Class.create({
 			this.navItems[i].stopObserving(Mojo.Event.tap , this._internalCallBack);
 		}
 		
-		this.DOM.stopObserving(Mojo.Event.dragStart , this._onDragStart);
+		this.Dragger.stopObserving(Mojo.Event.dragStart , this._onDragStart);
 	},
 	
 	getOffset: function()
 	{
-		return (this.DOM.style.left ? this.DOM.style.left : "0px");
+		return (this.Dragger.style.left ? this.Dragger.style.left : "0px");
 	},
 	
 	getOffsetNum: function()
@@ -278,7 +263,7 @@ WootOn.Nav = Class.create({
 	
 	setOffset: function(offset)
 	{
-		this.DOM.setStyle({left: offset});
+		this.Dragger.setStyle({left: offset});
 		this.setArrows();
 	},
 	
@@ -286,7 +271,7 @@ WootOn.Nav = Class.create({
 	{
 		var offset = this.getOffsetNum();
 		
-		if (offset > this.maxOffset+12)
+		if (offset > this.maxOffset + 18)
 		{
 			this.rightArrow.show();
 		}
@@ -295,7 +280,7 @@ WootOn.Nav = Class.create({
 			this.rightArrow.hide();
 		}
 		
-		if (offset > -25)
+		if (offset > -18)
 		{
 			this.leftArrow.hide();
 		}
@@ -308,6 +293,33 @@ WootOn.Nav = Class.create({
 	toString: function()
 	{
 		return "";
+	},
+	
+	resetSizing: function()
+	{
+		this.setSizing();
+		try
+		{
+			var p = this.getOffsetNum();
+			if (p > 0)
+			{
+				p = 0;
+			}
+			else if (p < this.maxOffset)
+			{
+				p = this.maxOffset;
+			}
+			
+			if (this.maxOffset >= 0)
+			{
+				p = 0;
+			}
+			this.setOffset(p + 'px');
+		}
+		catch(e)
+		{
+			this.setOffset(0 + 'px');
+		}
 	}
 	
 });

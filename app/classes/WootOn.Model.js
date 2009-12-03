@@ -21,10 +21,16 @@ WootOn.Model = Class.create({
 	isLoaded: false,
 	
 	
-	initialize: function()
+	initialize: function(url)
 	{
+		this.feedURL = url;
 		this.onSuccess = this.onSuccess.bind(this);
 		this.onFailure = this.onFailure.bind(this);
+	},
+	
+	updateURL: function(url)
+	{
+		this.feedURL = url;
 	},
 	
 	loadViaJSON: function(json)
@@ -43,18 +49,16 @@ WootOn.Model = Class.create({
 		this.isLoaded = true;
 	},
 	
-	loadViaURL: function(url , cb)
+	load: function(cb)
 	{
-		if (!url) return;
-		this.feedURL = url
-		this.callback = cb || function() {};
+		this.callback = cb || Mojo.doNothing;
 		this.ajaxRequest = new Ajax.Request(this.feedURL , {onSuccess: this.onSuccess , onFailure: this.onFailure});
 	},
 	
 	update: function(cb)
 	{
-		var cb = cb || function() {};
-		this.loadViaURL(this.feedURL , cb);
+		var cb = cb || Mojo.doNothing;
+		this.load(cb);
 	},
 	
 	onSuccess: function(t)
@@ -81,6 +85,41 @@ WootOn.Model = Class.create({
 		return this.callback(false);
 	},
 	
+	checkForChange: function(callBack)
+	{
+		callBack = callBack || Mojo.doNothing;
+		this.ajaxRequest = new Ajax.Request(this.feedURL , {onSuccess: this.checkForChangeSuccess.bind(this , callBack) , onFailure: this.checkForChangeFailure.bind(this , callBack)});
+	},
+	
+	checkForChangeSuccess: function(callBack , t)
+	{
+		callBack = callBack || Mojo.doNothing;
+		try
+		{
+			var json = t.responseText.evalJSON();
+			if (json.title != this.title)
+			{
+				this.loadViaJSON(json);
+				callBack(true);
+			}
+			else
+			{
+				callBack(false);
+			}
+			
+		}
+		catch(e)
+		{
+			return this.checkForChangeFailure(callBack);
+		}
+	},
+	
+	checkForChangeFailure: function(callBack , t)
+	{
+		callBack = callBack || Mojo.doNothing;
+		callBack(false);
+	},
+	
 	isWootOff: function()
 	{
 		if (!this.rawData) return false;
@@ -91,5 +130,18 @@ WootOn.Model = Class.create({
 	{
 		if (!this.rawData) return false;
 		return this.soldout;
+	},
+	
+	getStorable: function()
+	{
+		return {raw: this.rawData , version: 1};
+	},
+	
+	restore: function(o)
+	{
+		if (o && o.raw)
+		{
+			this.loadViaJSON(o.raw);
+		}
 	}
 });

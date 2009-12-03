@@ -1,7 +1,9 @@
 {
 	"id": "com.deliciousmorsel.wooton",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"vendor": "Delicious Morsel LLC",
+	"company": "Delicious Morsel",
+	"copyright": "&copy; 2009 Delicious Morsel LLC",
 	"type": "web",
 	"main": "index.html",
 	"title": "WootOn!",
