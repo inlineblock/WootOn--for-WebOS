@@ -83,7 +83,7 @@ NotificationsAssistant = Class.create({
 		woot = el.woot || false;
 		if (!woot) return;
 		WootOn.StageManager.close('woot');
-		WootOn.StageManager.newCard('woot' , woot.type , {switchTo: woot.type});
+		WootOn.StageManager.newCard('woot' , woot.type , {switchTo: woot.type , initial: true});
 		if (this.completed.length === 1)
 		{
 			this.close();

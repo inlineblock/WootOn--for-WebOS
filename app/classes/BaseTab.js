@@ -7,6 +7,10 @@ BaseTab = Class.create({
 		this.navOffset = o.navOffset || "0px";
 		this.initListeners();
 		this.doInitialize();
+		if (o.initial)
+		{
+			delete WootOn.activeNav;
+		}
 	},
 	
 	initListeners: function()
@@ -162,6 +166,21 @@ BaseTab = Class.create({
 		if (this._orientation === orientation || !landscape.enabled)
 		{
 			return;
+		}
+		
+		if (orientation == 'left' || orientation  == 'right')
+		{
+			if (WootOn.activeNav && WootOn.activeNav.DOM)
+			{
+				WootOn.activeNav.DOM.hide();
+			}
+		}
+		else
+		{
+			if (WootOn.activeNav && WootOn.activeNav.DOM)
+			{
+				WootOn.activeNav.DOM.show();
+			}
 		}
 		
 		this._orientation = orientation;

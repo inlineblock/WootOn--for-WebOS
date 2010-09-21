@@ -22,7 +22,7 @@ AppAssistant = Class.create({
 		}
 		else
 		{
-			WootOn.StageManager.newCard('woot');
+			WootOn.StageManager.newCard('woot' , 'woot' , {initial: true});
 		}
 	},
 	
